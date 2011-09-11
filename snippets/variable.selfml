@@ -1,0 +1,8 @@
+(name variable)
+
+(trigger
+    (tab v))
+
+(only-in [source.java, source.groovy])
+
+(snippet [%{1="String"} %{2="var"}%{3=" = %{0="null"}"};])

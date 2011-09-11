@@ -1,0 +1,8 @@
+(name println)
+
+(trigger
+    (tab pl))
+
+(only-in source.java)
+
+(snippet [System.out.println(%{1});%{0}])

@@ -1,0 +1,8 @@
+(name abstract)
+
+(trigger
+    (tab ab))
+
+(only-in [source.java, source.groovy])
+
+(snippet [abstract ])

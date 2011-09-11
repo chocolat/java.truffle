@@ -1,0 +1,10 @@
+(name [method (main)])
+
+(trigger
+    (tab main))
+
+(only-in source.java)
+
+(snippet [public static void main(String[] args) {
+	%{0}
+}])

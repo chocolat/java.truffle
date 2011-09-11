@@ -1,0 +1,10 @@
+(name if)
+
+(trigger
+    (tab if))
+
+(only-in [source.java, source.groovy])
+
+(snippet [if (%{1}) {
+	%{0}
+}])

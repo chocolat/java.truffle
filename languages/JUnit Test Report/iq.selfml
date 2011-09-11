@@ -1,0 +1,51 @@
+(detector
+    (content-matches ^Testsuite:))
+
+(folding
+    (start Testcase:)
+    (stop [(?=Testcase:)]))
+
+(in source.java
+    (shell-variables
+        (TM_COMMENT_START [// ])
+        (TM_COMMENT_START_2 /*)
+        (TM_COMMENT_END_2 */))
+    (comment.line [// ])
+    (comment.block /* */))
+
+(in source.java
+    (indentation.decrease [^(.*\*/)?\s*\}([^}{"']*\{)?[;\s]*(//.*|/\*.*\*/\s*)?$|^\s*(public|private|protected):\s*$])
+    (indentation.increase [^.*\{[^}"']*$|^\s*(public|private|protected):\s*$])
+    (indentation.increase-next-line-only [^(?!(.*[};:])?\s*(//|/\*.*\*/\s*$)).*[^\s;:{}]\s*$]))
+
+(in [source.java meta.class meta.class.identifier]
+    (symbol-list))
+
+(in [source.java meta.class.body meta.class.body meta.method.identifier]
+    (symbol-list
+        (transformation [
+		s/\s{2,}/ /g;
+		s/.*/    $0/g;
+	])))
+
+(in [source.java meta.class.body meta.class.identifier]
+    (symbol-list
+        (transformation [s/.*/  $0/g])))
+
+(in [source.java meta.class.body meta.class.body meta.class.body meta.method.identifier]
+    (symbol-list
+        (transformation [
+		s/\s{2,}/ /g;
+		s/.*/    $0/g;
+	])))
+
+(in [source.java meta.class.body meta.class.body meta.class.identifier]
+    (symbol-list
+        (transformation [s/.*/    $0/g])))
+
+(in [source.java meta.class.body meta.method.identifier]
+    (symbol-list
+        (transformation [
+		s/\s{2,}/ /g;
+		s/.*/  $0/g;
+	])))

@@ -1,0 +1,10 @@
+(name interface)
+
+(trigger
+    (tab in))
+
+(only-in [source.java, source.groovy])
+
+(snippet [interface %{1="%{TM_FILENAME/(.*?)(\..+)/$1/}"} %{2="extends %{3="Parent"} "}{
+	%{0}
+}])

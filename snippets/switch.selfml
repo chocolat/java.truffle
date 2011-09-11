@@ -1,0 +1,10 @@
+(name switch)
+
+(trigger
+    (tab sw))
+
+(only-in [source.java, source.groovy])
+
+(snippet [switch (%{1}) {
+	%{0}
+}])

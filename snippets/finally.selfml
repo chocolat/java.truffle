@@ -1,0 +1,10 @@
+(name finally)
+
+(trigger
+    (tab fy))
+
+(only-in [source.java, source.groovy])
+
+(snippet [finally {
+	%{0}
+}])

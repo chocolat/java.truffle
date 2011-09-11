@@ -1,0 +1,10 @@
+(name class)
+
+(trigger
+    (tab cl))
+
+(only-in [source.java, source.groovy])
+
+(snippet [class %{1="%{TM_FILENAME/(.*?)(\..+)/$1/}"} %{2="extends %{3="Parent"} "}%{4="implements %{5="Interface"} "}{
+	%{0}
+}])

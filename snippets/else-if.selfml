@@ -1,0 +1,10 @@
+(name [else if])
+
+(trigger
+    (tab elif))
+
+(only-in [source.java, source.groovy])
+
+(snippet [else if (%{1}) {
+	%{0}
+}])

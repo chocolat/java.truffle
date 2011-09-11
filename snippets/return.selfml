@@ -1,0 +1,8 @@
+(name return)
+
+(trigger
+    (tab re))
+
+(only-in [source.java, source.groovy])
+
+(snippet [return ])

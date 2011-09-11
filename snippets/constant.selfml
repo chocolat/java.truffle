@@ -1,0 +1,8 @@
+(name constant)
+
+(trigger
+    (tab co))
+
+(only-in source.java)
+
+(snippet [static public final %{1="String"} %{2="var"} = %{3};%{0}])

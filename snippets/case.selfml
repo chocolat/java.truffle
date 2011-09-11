@@ -1,0 +1,10 @@
+(name case)
+
+(trigger
+    (tab cs))
+
+(only-in [source.java, source.groovy])
+
+(snippet [case %{1}:
+	%{2}
+%{0}])

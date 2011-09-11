@@ -1,0 +1,8 @@
+(name public)
+
+(trigger
+    (tab pu))
+
+(only-in [source.java, source.groovy])
+
+(snippet [public ])

@@ -1,0 +1,8 @@
+(name [throw new])
+
+(trigger
+    (tab tn))
+
+(only-in [source.java, source.groovy])
+
+(snippet [throw new %{0}])

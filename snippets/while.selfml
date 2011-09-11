@@ -1,0 +1,10 @@
+(name while)
+
+(trigger
+    (tab wh))
+
+(only-in source.java)
+
+(snippet [while (%{1}) {
+	%{0}
+}])

@@ -1,0 +1,14 @@
+(trigger
+    (key [[cmd]R]))
+
+(name [Compile & Run])
+
+(only-in source.java)
+
+(input document)
+
+(output html)
+
+(save file)
+
+(script javamate_bootstrap.sh)

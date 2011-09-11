@@ -1,0 +1,9 @@
+(name [import junit.framework.TestCase;])
+
+(trigger
+    (tab imt))
+
+(only-in source.java)
+
+(snippet [import junit.framework.TestCase;
+%{0}])

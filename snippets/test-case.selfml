@@ -1,0 +1,10 @@
+(name [test case])
+
+(trigger
+    (tab tc))
+
+(only-in source.java)
+
+(snippet [public class %{1="%{TM_FILENAME/(.*?)(\..+)/$1/}"} extends %{2="TestCase"} {
+	%{0}
+}])

@@ -1,0 +1,17 @@
+(root source.java-props
+    (zone comment.line.number-sign.java-props
+        (match
+            (regex [([#!])(.+)?$\n?]
+                (1 punctuation.definition.comment.java-props))))
+    (zone comment.block.java-props
+        (start
+            (regex /\*
+                (0 punctuation.definition.comment.java-props)))
+        (end
+            (regex \*/
+                (0 punctuation.definition.comment.java-props))))
+    (zone
+        (match
+            (regex [^([^:=]+)([:=])(.*)$]
+                (1 keyword.other.java-props)
+                (2 punctuation.separator.key-value.java-props)))))

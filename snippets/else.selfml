@@ -1,0 +1,10 @@
+(name else)
+
+(trigger
+    (tab el))
+
+(only-in [source.java, source.groovy])
+
+(snippet [else {
+	%{0}
+}])

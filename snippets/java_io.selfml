@@ -1,0 +1,8 @@
+(name java.io.)
+
+(trigger
+    (tab j.i))
+
+(only-in source.java)
+
+(snippet java.io.)

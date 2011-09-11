@@ -1,0 +1,11 @@
+(name method)
+
+(trigger
+    (tab m))
+
+(only-in source.java)
+
+(snippet [%{1="void"} %{2="method"}(%{3}) %{4="throws %{5} "}{
+	%{0}
+}
+])

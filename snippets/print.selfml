@@ -1,0 +1,8 @@
+(name print)
+
+(trigger
+    (tab p))
+
+(only-in source.java)
+
+(snippet [System.out.print(%{1});%{0}])

@@ -1,0 +1,8 @@
+(name java.beans.)
+
+(trigger
+    (tab j.b))
+
+(only-in source.java)
+
+(snippet java.beans.)

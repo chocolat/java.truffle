@@ -1,0 +1,10 @@
+(name [for (each)])
+
+(trigger
+    (tab fore))
+
+(only-in source.java)
+
+(snippet [for (%{1} : %{2}) {
+	%{0}
+}])

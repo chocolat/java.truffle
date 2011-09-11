@@ -1,0 +1,8 @@
+(name java.math.)
+
+(trigger
+    (tab j.m))
+
+(only-in source.java)
+
+(snippet java.math.)

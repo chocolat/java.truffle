@@ -1,0 +1,8 @@
+(name [constant string])
+
+(trigger
+    (tab cos))
+
+(only-in source.java)
+
+(snippet [static public final String %{1="var"} = "%{2}";%{0}])

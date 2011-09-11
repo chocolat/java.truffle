@@ -1,0 +1,10 @@
+(name test)
+
+(trigger
+    (tab t))
+
+(only-in source.java)
+
+(snippet [public void test%{1="Name"}() throws Exception {
+	%{0}
+}])

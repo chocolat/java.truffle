@@ -1,0 +1,435 @@
+(root source.java
+    (zone meta.package.java
+        (match
+            (regex [^\s*(package)\b(?:\s*([^ ;$]+)\s*(;)?)?]
+                (3 punctuation.terminator.java)
+                (1 keyword.other.package.java)
+                (2 storage.modifier.package.java))))
+    (zone meta.import.static.java
+        (match
+            (regex [^\s*(import static)\b(?:\s*([^ ;$]+)\s*(;)?)?]
+                (3 punctuation.terminator.java)
+                (1 keyword.other.import.static.java)
+                (2 storage.modifier.import.java))))
+    (zone meta.import.java
+        (match
+            (regex [^\s*(import)\b(?:\s*([^ ;$]+)\s*(;)?)?]
+                (3 punctuation.terminator.java)
+                (1 keyword.other.import.java)
+                (2 storage.modifier.import.java))))
+    (include @code))
+
+(collection constants-and-special-vars
+    (zone constant.language.java
+        (match
+            (list true false null)
+            (boundary.both)))
+    (zone variable.language.java
+        (match
+            (list this super)
+            (boundary.both)))
+    (zone constant.numeric.java
+        (match
+            (regex [\b((0(x|X)[0-9a-fA-F]*)|(([0-9]+\.?[0-9]*)|(\.[0-9]+))((e|E)(\+|-)?[0-9]+)?)([LlFfUuDd]|UL|ul)?\b])))
+    (zone constant.other.java
+        (match
+            (regex [(\.)?\b([A-Z][A-Z0-9_]+)(?!<|\.class|\s*\w+\s*=)\b]
+                (1 keyword.operator.dereference.java)))))
+
+(collection values
+    (include @strings)
+    (include @object-types)
+    (include @constants-and-special-vars))
+
+(collection class
+    (zone meta.class.java
+        (start
+            (regex [(?=\w?[\w\s]*(?:class|(?:@)?interface|enum)\s+\w+)]))
+        (end
+            (regex [}]
+                (0 punctuation.section.class.end.java)))
+        (subzones
+            (include @storage-modifiers)
+            (include @comments)
+            (zone meta.class.identifier.java
+                (match
+                    (regex [(class|(?:@)?interface|enum)\s+(\w+)]
+                        (1 storage.modifier.java)
+                        (2 entity.name.type.class.java))))
+            (zone meta.definition.class.inherited.classes.java
+                (start
+                    (regex extends
+                        (0 storage.modifier.extends.java)))
+                (end
+                    (regex [(?={|implements)]))
+                (subzones
+                    (include @object-types-inherited)
+                    (include @comments)))
+            (zone meta.definition.class.implemented.interfaces.java
+                (start
+                    (regex [(implements)\s]
+                        (1 storage.modifier.implements.java)))
+                (end
+                    (regex [(?=\s*extends|\{)]))
+                (subzones
+                    (include @object-types-inherited)
+                    (include @comments)))
+            (zone meta.class.body.java
+                (start [{])
+                (end
+                    (regex [(?=})]))
+                (subzones
+                    (include @class-body))))))
+
+(collection parameters
+    (zone storage.modifier.java
+        (match final))
+    (include @primitive-arrays)
+    (include @primitive-types)
+    (include @object-types)
+    (zone variable.parameter.java
+        (match
+            (regex \w+))))
+
+(collection code
+    (include @comments)
+    (include @class)
+    (zone
+        (start [{])
+        (end [}])
+        (subzones
+            (include @code)))
+    (include @assertions)
+    (include @parens)
+    (include @constants-and-special-vars)
+    (include @anonymous-classes-and-new)
+    (include @keywords)
+    (include @storage-modifiers)
+    (include @strings)
+    (include @all-types))
+
+(collection annotations
+    (zone meta.declaration.annotation.java
+        (start
+            (regex [(@[^ (]+)(\()]
+                (1 storage.type.annotation.java)
+                (2 punctuation.definition.annotation-arguments.begin.java)))
+        (end
+            (regex [(\))]
+                (1 punctuation.definition.annotation-arguments.end.java)))
+        (subzones
+            (zone
+                (match
+                    (regex [(\w*)\s*(=)]
+                        (1 constant.other.key.java)
+                        (2 keyword.operator.assignment.java))))
+            (include @code)
+            (zone punctuation.seperator.property.java
+                (match ,))))
+    (zone storage.type.annotation.java
+        (match
+            (regex @\w*))))
+
+(collection anonymous-classes-and-new
+    (zone
+        (start
+            (regex \bnew\b
+                (0 keyword.control.new.java)))
+        (end
+            (regex `(?<=\)|\])(?!\s*{)|(?<=})|(?=;)`))
+        (subzones
+            (zone
+                (start
+                    (regex `(\w+)\s*(?=\[)`
+                        (1 storage.type.java)))
+                (end
+                    (regex [}|(?=\s*(?:;|\)))]))
+                (subzones
+                    (zone
+                        (start
+                            (regex `\[`))
+                        (end
+                            (regex `\]`))
+                        (subzones
+                            (include @code)))
+                    (zone
+                        (start [{])
+                        (end
+                            (regex [(?=})]))
+                        (subzones
+                            (include @code)))))
+            (zone
+                (start
+                    (regex [(?=\w.*\()]))
+                (end
+                    (regex [(?<=\))]))
+                (subzones
+                    (include @object-types)
+                    (zone
+                        (start
+                            (regex [\(]
+                                (1 storage.type.java)))
+                        (end
+                            (regex [\)]))
+                        (subzones
+                            (include @code)))))
+            (zone meta.inner-class.java
+                (start [{])
+                (end [}])
+                (subzones
+                    (include @class-body))))))
+
+(collection assertions
+    (zone meta.declaration.assertion.java
+        (start
+            (regex [\b(assert)\s]
+                (1 keyword.control.assert.java)))
+        (end
+            (regex $))
+        (subzones
+            (zone keyword.operator.assert.expression-seperator.java
+                (match :))
+            (include @code))))
+
+(collection object-types-inherited
+    (zone entity.other.inherited-class.java
+        (start
+            (regex [\b((?:[a-z]\w*\.)*[A-Z]+\w*)<]))
+        (end
+            (regex [>|[^\w\s,<]]))
+        (subzones
+            (include @object-types)
+            (zone storage.type.generic.java
+                (start <)
+                (end
+                    (regex [>|[^\w\s,<]])))))
+    (zone entity.other.inherited-class.java
+        (match
+            (regex [\b(?:[a-z]\w*(\.))*[A-Z]+\w*]
+                (1 keyword.operator.dereference.java)))))
+
+(collection class-body
+    (include @comments)
+    (include @class)
+    (include @enums)
+    (include @methods)
+    (include @annotations)
+    (include @storage-modifiers)
+    (include @code))
+
+(collection strings
+    (zone string.quoted.double.java
+        (start
+            (regex "
+                (0 punctuation.definition.string.begin.java)))
+        (end
+            (regex "
+                (0 punctuation.definition.string.end.java)))
+        (subzones
+            (zone constant.character.escape.java
+                (match
+                    (regex \\.)))))
+    (zone string.quoted.single.java
+        (start
+            (regex '
+                (0 punctuation.definition.string.begin.java)))
+        (end
+            (regex '
+                (0 punctuation.definition.string.end.java)))
+        (subzones
+            (zone constant.character.escape.java
+                (match
+                    (regex \\.))))))
+
+(collection keywords
+    (zone keyword.control.catch-exception.java
+        (match
+            (list try catch finally throw)
+            (boundary.both)))
+    (zone keyword.control.ternary.java
+        (match
+            (regex \?|:)))
+    (zone keyword.control.java
+        (match
+            (list return break case continue default do while for switch if else)
+            (boundary.both)))
+    (zone keyword.operator.java
+        (match
+            (list instanceof)
+            (boundary.both)))
+    (zone keyword.operator.bitwise.java
+        (match
+            (regex [(<<|>>>?|~|\^)])))
+    (zone keyword.operator.assignment.bitwise.java
+        (match
+            (regex [((&|\^|\||<<|>>>?)=)])))
+    (zone keyword.operator.comparison.java
+        (match
+            (regex [(===?|!=|<=|>=|<>|<|>)])))
+    (zone keyword.operator.assignment.arithmetic.java
+        (match
+            (regex [([+*/%-]=)])))
+    (zone keyword.operator.assignment.java
+        (match
+            (list =)))
+    (zone keyword.operator.increment-decrement.java
+        (match
+            (regex [(\-\-|\+\+)])))
+    (zone keyword.operator.arithmetic.java
+        (match
+            (regex [(\-|\+|\*|\/|%)])))
+    (zone keyword.operator.logical.java
+        (match
+            (regex [(!|&&|\|\|)])))
+    (zone keyword.operator.bitwise.java
+        (match
+            (regex [(\||&)])))
+    (zone keyword.operator.dereference.java
+        (match
+            (regex [(?<=\S)\.(?=\S)])))
+    (zone punctuation.terminator.java
+        (match ;)))
+
+(collection comments-inline
+    (zone comment.block.java
+        (start
+            (regex /\*
+                (0 punctuation.definition.comment.java)))
+        (end
+            (regex \*/
+                (0 punctuation.definition.comment.java))))
+    (zone
+        (match
+            (regex [\s*((//).*$\n?)]
+                (1 comment.line.double-slash.java)
+                (2 punctuation.definition.comment.java)))))
+
+(collection throws
+    (zone meta.throwables.java
+        (start
+            (regex throws
+                (0 storage.modifier.java)))
+        (end
+            (regex [(?={|;)]))
+        (subzones
+            (include @object-types))))
+
+(collection primitive-types
+    (zone storage.type.primitive.java
+        (match
+            (regex [\b(?:void|boolean|byte|char|short|int|float|long|double)\b]))))
+
+(collection all-types
+    (include @primitive-arrays)
+    (include @primitive-types)
+    (include @object-types))
+
+(collection storage-modifiers
+    (zone
+        (match
+            (regex [\b(public|private|protected|static|final|native|synchronized|abstract|threadsafe|transient)\b]
+                (1 storage.modifier.java)))))
+
+(collection enums
+    (zone
+        (start
+            (regex [^(?=\s*[A-Z0-9_]+\s*({|\(|,))]))
+        (end
+            (regex [(?=;|})]))
+        (subzones
+            (zone meta.enum.java
+                (start
+                    (regex \w+
+                        (0 constant.other.enum.java)))
+                (end
+                    (regex [(?=,|;|})]))
+                (subzones
+                    (include @parens)
+                    (zone
+                        (start [{])
+                        (end [}])
+                        (subzones
+                            (include @class-body))))))))
+
+(collection comments
+    (zone comment.block.empty.java
+        (match
+            (regex /\*\*/
+                (0 punctuation.definition.comment.java))))
+    (include text.html.javadoc)
+    (include @comments-inline))
+
+(collection methods
+    (zone meta.method.java
+        (start
+            (regex [(?!new)(?=\w.*\s+)(?=[^=]+\()]))
+        (end
+            (regex [}|(?=;)]))
+        (subzones
+            (include @storage-modifiers)
+            (zone meta.method.identifier.java
+                (start
+                    (regex [(\w+)\s*\(]
+                        (1 entity.name.function.java)))
+                (end
+                    (regex [\)]))
+                (subzones
+                    (include @parameters)))
+            (zone meta.method.return-type.java
+                (start
+                    (regex [(?=\w.*\s+\w+\s*\()]))
+                (end
+                    (regex [(?=\w+\s*\()]))
+                (subzones
+                    (include @all-types)))
+            (include @throws)
+            (zone meta.method.body.java
+                (start [{])
+                (end
+                    (regex [(?=})]))
+                (subzones
+                    (include @code))))))
+
+(collection primitive-arrays
+    (zone storage.type.primitive.array.java
+        (match
+            (regex [\b(?:void|boolean|byte|char|short|int|float|long|double)(\[\])*\b]))))
+
+(collection parens
+    (zone
+        (start
+            (regex [\(]))
+        (end
+            (regex [\)]))
+        (subzones
+            (include @code))))
+
+(collection object-types
+    (zone storage.type.generic.java
+        (start
+            (regex [\b((?:[a-z]\w*\.)*[A-Z]+\w*)<]))
+        (end
+            (regex [>|[^\w\s,\?<\[\]]]))
+        (subzones
+            (include @object-types)
+            (zone storage.type.generic.java
+                (start <)
+                (end
+                    (regex [>|[^\w\s,\[\]<]])))))
+    (zone storage.type.object.array.java
+        (start
+            (regex `\b((?:[a-z]\w*\.)*[A-Z]+\w*)(?=\[)`))
+        (end
+            (regex `(?=[^\]\s])`))
+        (subzones
+            (zone
+                (start
+                    (regex `\[`))
+                (end
+                    (regex `\]`))
+                (subzones
+                    (include @code)))))
+    (zone storage.type.java
+        (match
+            (regex [\b(?:[a-z]\w*(\.))*[A-Z]+\w*\b]
+                (1 keyword.operator.dereference.java)))))

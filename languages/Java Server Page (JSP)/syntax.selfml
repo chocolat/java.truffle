@@ -1,0 +1,88 @@
+(root text.html.jsp
+    (zone comment.block.jsp
+        (start
+            (regex <%--
+                (0 punctuation.definition.comment.jsp)))
+        (end
+            (regex --%>
+                (0 punctuation.definition.comment.jsp))))
+    (zone meta.directive.jsp
+        (start
+            (regex <%@
+                (0 punctuation.section.directive.jsp)))
+        (end
+            (regex %>
+                (0 punctuation.section.directive.jsp)))
+        (subzones
+            (zone
+                (start
+                    (regex \w+
+                        (0 keyword.other.directive.jsp)))
+                (end
+                    (regex [(?=%>)]))
+                (subzones
+                    (zone constant.other.directive.attribute.jsp
+                        (match
+                            (regex \w+)))
+                    (zone keyword.operator.assignment.jsp
+                        (match =))
+                    (zone string.quoted.double.jsp
+                        (start
+                            (regex "
+                                (0 punctuation.definition.string.begin.jsp)))
+                        (end
+                            (regex "
+                                (0 punctuation.definition.string.end.jsp)))
+                        (subzones
+                            (zone constant.character.escape.jsp
+                                (match
+                                    (regex \\.)))))
+                    (zone string.quoted.single.jsp
+                        (start
+                            (regex '
+                                (0 punctuation.definition.string.begin.jsp)))
+                        (end
+                            (regex '
+                                (0 punctuation.definition.string.end.jsp)))
+                        (subzones
+                            (zone constant.character.escape.jsp
+                                (match
+                                    (regex \\.)))))))))
+    (zone
+        (start
+            (regex [(<%[!=]?)|(<jsp:scriptlet>|<jsp:expression>|<jsp:declaration>)]
+                (1 punctuation.section.embedded.jsp)
+                (2 meta.tag.block.jsp)))
+        (end
+            (regex [(?<=</jsp:scriptlet>|</jsp:expression>|</jsp:declaration>|%>)]))
+        (subzones
+            (zone
+                (match
+                    (regex [(</jsp:scriptlet>|</jsp:expression>|</jsp:declaration>)|(%>)]
+                        (1 meta.tag.block.jsp)
+                        (2 punctuation.section.embedded.jsp))))
+            (zone source.java.embedded.html
+                (start
+                    (regex [(?<!\n)(?!</jsp:scriptlet>|</jsp:expression>|</jsp:declaration>|%>|\{|\})]))
+                (end
+                    (regex [(?=</jsp:scriptlet>|</jsp:expression>|</jsp:declaration>|%>|\{|\})|\n]))
+                (subzones
+                    (include source.java)))
+            (zone
+                (start [{])
+                (end [}])
+                (subzones
+                    (zone
+                        (start
+                            (regex [(</jsp:scriptlet>|</jsp:expression>|</jsp:declaration>)|(%>)]
+                                (1 meta.tag.block.jsp)
+                                (2 punctuation.section.embedded.jsp)))
+                        (end
+                            (regex [(<jsp:scriptlet>|<jsp:expression>|<jsp:declaration>)|(<%[!=]?)]
+                                (1 meta.tag.block.jsp)
+                                (2 punctuation.section.embedded.jsp)))
+                        (subzones
+                            (include text.html.jsp)))
+                    (include source.java)))
+            (include source.java)))
+    (include text.html.basic))

@@ -1,0 +1,9 @@
+(name default)
+
+(trigger
+    (tab de))
+
+(only-in source.java)
+
+(snippet [default:
+	%{0}])

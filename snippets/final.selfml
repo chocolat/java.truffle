@@ -1,0 +1,8 @@
+(name final)
+
+(trigger
+    (tab fi))
+
+(only-in [source.java, source.groovy])
+
+(snippet [final ])

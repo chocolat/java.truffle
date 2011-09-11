@@ -1,0 +1,10 @@
+(name try)
+
+(trigger
+    (tab tr))
+
+(only-in [source.java, source.groovy])
+
+(snippet [try {
+	%{0}
+}])

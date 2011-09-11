@@ -1,0 +1,8 @@
+(name private)
+
+(trigger
+    (tab pr))
+
+(only-in [source.java, source.groovy])
+
+(snippet [private ])

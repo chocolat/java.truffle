@@ -1,0 +1,8 @@
+(name protected)
+
+(trigger
+    (tab po))
+
+(only-in [source.java, source.groovy])
+
+(snippet [protected ])

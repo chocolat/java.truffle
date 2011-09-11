@@ -1,0 +1,8 @@
+(name synchronized)
+
+(trigger
+    (tab sy))
+
+(only-in [source.java, source.groovy])
+
+(snippet [synchronized ])

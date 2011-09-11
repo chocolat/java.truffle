@@ -1,0 +1,8 @@
+(name java.net.)
+
+(trigger
+    (tab j.n))
+
+(only-in source.java)
+
+(snippet java.net.)

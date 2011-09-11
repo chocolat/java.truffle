@@ -1,0 +1,49 @@
+(root text.junit-test-report
+    (zone meta.testsuite.name.junit-test-report
+        (match
+            (regex [(Testsuite:) (.+)$\n]
+                (1 meta.testsuite.label.junit-test-report)
+                (2 entity.name.testsuite.junit-test-report))))
+    (zone meta.testcase.name.junit-test-report
+        (match
+            (regex [(Testcase:) (.+) took ([\d\.]+) sec$\n]
+                (1 meta.testcase.label.junit-test-report)
+                (2 entity.name.testcase.junit-test-report))))
+    (zone meta.stackframe.junit-test-report
+        (start
+            (regex [at\s+(?=.+?\(.+?\)$)]))
+        (end
+            (regex $\n))
+        (subzones
+            (zone meta.stackframe.method.junit-test-report
+                (match
+                    (regex [(?<=\.)[^\.]+?(?=\()])))
+            (zone
+                (match
+                    (regex [\((.+)(:)(.+)\)$]
+                        (3 meta.stackframe.source.line.junit-test-report)
+                        (1 meta.stackframe.source.junit-test-report))))))
+    (zone meta.section.output.junit-test-report
+        (start
+            (regex [------------- Standard Output ---------------$\n]))
+        (end
+            (regex [------------- ---------------- ---------------$\n]))
+        (subzones
+            (zone meta.output.junit-test-report
+                (start
+                    (regex [--Output from (.+?)--$\n]
+                        (1 entity.name.testcase.junit-test-report)))
+                (end
+                    (regex [(?=--Output from|------------- ---------------- ---------------)])))))
+    (zone meta.section.error.junit-test-report
+        (start
+            (regex [------------- Standard Error -----------------$\n]))
+        (end
+            (regex [------------- ---------------- ---------------$\n]))
+        (subzones
+            (zone meta.error.junit-test-report
+                (start
+                    (regex [--Output from (.+?)--$\n]
+                        (1 entity.name.testcase.junit-test-report)))
+                (end
+                    (regex [(?=--Output from|------------- ---------------- ---------------)]))))))

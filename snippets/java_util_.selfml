@@ -1,0 +1,8 @@
+(name java.util.)
+
+(trigger
+    (tab j.u))
+
+(only-in source.java)
+
+(snippet java.util.)

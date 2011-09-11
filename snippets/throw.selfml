@@ -1,0 +1,8 @@
+(name throw)
+
+(trigger
+    (tab th))
+
+(only-in [source.java, source.groovy])
+
+(snippet [throw %{0}])

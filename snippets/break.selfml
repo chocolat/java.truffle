@@ -1,0 +1,9 @@
+(name break)
+
+(trigger
+    (tab br))
+
+(only-in source.java)
+
+(snippet [break;
+])

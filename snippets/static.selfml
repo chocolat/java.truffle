@@ -1,0 +1,8 @@
+(name static)
+
+(trigger
+    (tab st))
+
+(only-in [source.java, source.groovy])
+
+(snippet [static ])
