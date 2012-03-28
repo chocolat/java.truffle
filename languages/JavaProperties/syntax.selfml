@@ -1,0 +1,27 @@
+(root source.java.properties
+    (zone comment.line.properties
+        (match
+            (regex [^(#.*)(
+|$)]
+                (1 comment.definition.comment.java-props))))
+    (zone kvp.singleline.properties
+        (match
+            (regex [^(?#KEY)(?:[ 	])*([a-zA-Z][^<>/][a-zA-Z0-9-_.]*)(=)(?#VALUE)(.*
+)]
+                (3 string.kvp.value.java.properties)
+                (1 markup.heading.kvp.key.java.properties)
+                (2 markup.deleted.kvp.key.java.properties))))
+    (zone kvp.dangling.space.between.key.and.equalsign.properties
+        (match
+            (regex [^(?#KEY)(?:[ 	])*([a-zA-Z][^<>/][a-zA-Z0-9-_.]*)([ 	]+=)(?#VALUE)(.*
+)]
+                (3 invalid.deprecated.dangling.value.properties)
+                (1 meta.line.error.logfile.dangling.key.properties)
+                (2 invalid.illegal.dangling.equalsign.properties))))
+    (zone kvp.multiline.properties
+        (match
+            (regex [^((?:[ 	])*[^#].*\
+|(?:[ 	])*\
+|(?:[ 	])*[^#](?<!=).*
+)]
+                (1 string.kvp.multiline.properties)))))

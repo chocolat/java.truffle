@@ -84,6 +84,7 @@
 (collection parameters
     (zone storage.modifier.java
         (match final))
+    (include @annotations)
     (include @primitive-arrays)
     (include @primitive-types)
     (include @object-types)
@@ -105,6 +106,7 @@
     (include @anonymous-classes-and-new)
     (include @keywords)
     (include @storage-modifiers)
+    (include @method-call)
     (include @strings)
     (include @all-types))
 
@@ -143,7 +145,7 @@
                     (regex `(\w+)\s*(?=\[)`
                         (1 storage.type.java)))
                 (end
-                    (regex [}|(?=\s*(?:;|\)))]))
+                    (regex [}|(?=\s*(?:,|;|\)))]))
                 (subzones
                     (zone
                         (start
@@ -212,6 +214,7 @@
     (include @comments)
     (include @class)
     (include @enums)
+    (include @variables)
     (include @methods)
     (include @annotations)
     (include @storage-modifiers)
@@ -314,15 +317,29 @@
         (subzones
             (include @object-types))))
 
-(collection primitive-types
-    (zone storage.type.primitive.java
-        (match
-            (regex [\b(?:void|boolean|byte|char|short|int|float|long|double)\b]))))
+(collection method-call
+    (zone meta.method-call.java
+        (start
+            (regex [([\w$]+)(\()]
+                (1 meta.method.java)
+                (2 punctuation.definition.method-parameters.begin.java)))
+        (end
+            (regex [\)]
+                (0 punctuation.definition.method-parameters.end.java)))
+        (subzones
+            (zone punctuation.definition.seperator.parameter.java
+                (match ,))
+            (include @code))))
 
 (collection all-types
     (include @primitive-arrays)
     (include @primitive-types)
     (include @object-types))
+
+(collection primitive-types
+    (zone storage.type.primitive.java
+        (match
+            (regex [\b(?:void|boolean|byte|char|short|int|float|long|double)\b]))))
 
 (collection storage-modifiers
     (zone
@@ -362,7 +379,7 @@
 (collection methods
     (zone meta.method.java
         (start
-            (regex [(?!new)(?=\w.*\s+)(?=[^=]+\()]))
+            (regex [(?!new)(?=[\w<].*\s+)(?=[^=]+\()]))
         (end
             (regex [}|(?=;)]))
         (subzones
@@ -375,6 +392,15 @@
                     (regex [\)]))
                 (subzones
                     (include @parameters)))
+            (zone storage.type.token.java
+                (start <)
+                (end >)
+                (subzones
+                    (include @object-types)
+                    (zone storage.type.generic.java
+                        (start <)
+                        (end
+                            (regex [>|[^\w\s,\[\]<]])))))
             (zone meta.method.return-type.java
                 (start
                     (regex [(?=\w.*\s+\w+\s*\()]))
@@ -394,15 +420,6 @@
     (zone storage.type.primitive.array.java
         (match
             (regex [\b(?:void|boolean|byte|char|short|int|float|long|double)(\[\])*\b]))))
-
-(collection parens
-    (zone
-        (start
-            (regex [\(]))
-        (end
-            (regex [\)]))
-        (subzones
-            (include @code))))
 
 (collection object-types
     (zone storage.type.generic.java
@@ -433,3 +450,60 @@
         (match
             (regex [\b(?:[a-z]\w*(\.))*[A-Z]+\w*\b]
                 (1 keyword.operator.dereference.java)))))
+
+(collection parens
+    (zone
+        (start
+            (regex [\(]))
+        (end
+            (regex [\)]))
+        (subzones
+            (include @code))))
+
+(collection variables
+    (zone
+        (subzones
+            (zone meta.definition.variable.java
+                (start
+                    (regex [(?x:(?=
+                        (?:
+                            (?:private|protected|public|native|synchronized|abstract|threadsafe|transient|static|final) # visibility/modifier
+                                |
+                            (?:def)
+                                |
+                            (?:void|boolean|byte|char|short|int|float|long|double)
+                                |
+                            (?:(?:[a-z]\w*\.)*[A-Z]+\w*) # object type
+                        )
+                        \s+
+                        [\w\d_<>\[\],\s\?]+
+                        (?:=|$)
+                        
+        			))]))
+                (end
+                    (regex [(?=;)]))
+                (subzones
+                    (zone
+                        (match
+                            (regex \s)))
+                    (zone
+                        (match
+                            (regex [([A-Z_0-9]+)\s+(?=\=)]
+                                (1 constant.variable.java))))
+                    (zone
+                        (match
+                            (regex [(\w[^\s,]*)\s+(?=\=)]
+                                (1 meta.definition.variable.name.java))))
+                    (zone
+                        (start
+                            (regex =
+                                (0 keyword.operator.assignment.java)))
+                        (end
+                            (regex [(?=;)]))
+                        (subzones
+                            (include @code)))
+                    (zone
+                        (match
+                            (regex [(\w[^\s=]*)(?=\s*;)]
+                                (1 meta.definition.variable.name.java))))
+                    (include @code))))))

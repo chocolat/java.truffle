@@ -11,6 +11,6 @@
     (submenu Modifiers snippet.public snippet.protected snippet.private --- snippet.static snippet.final --- snippet.abstract)
     (submenu Constructs snippet.class snippet.interface snippet.method [snippet.method-(main)] --- snippet.variable snippet.constant snippet.constant-string)
     (submenu Control snippet.if snippet.else snippet.else-if --- snippet.return --- snippet.while snippet.for [snippet.for-(each)] --- snippet.throw snippet.catch --- snippet.switch snippet.case snippet.break snippet.default ---)
-    (submenu Directives snippet.package snippet.import snippet.synchronized snippet.assert)
+    (submenu Directives snippet.import snippet.synchronized snippet.assert)
     (submenu [Common Packages] snippet.java_util_ snippet.java_io snippet.java_beans_ snippet.java_net_ snippet.java_math)
     (submenu Testing snippet.test-case snippet.test --- snippet.import-junit_framework_testcase;))
