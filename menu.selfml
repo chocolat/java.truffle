@@ -1,7 +1,6 @@
 (menu command.compile-&-run
     [command.compile-&-run-(with-args)]
     command.copy-fully-qualified-class-name
-    command.organize-imports
     ---
     command.documentation-for-word
     ---
